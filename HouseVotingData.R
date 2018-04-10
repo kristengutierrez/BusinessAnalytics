@@ -1,0 +1,97 @@
+library(tidyverse)
+library(mlbench)
+library(caret)
+data("HouseVotes84")
+HouseVotes84 <- as.tibble(HouseVotes84)
+head(HouseVotes84)
+ggplot(data = HouseVotes84, mapping = aes(group = Class, x = Class, y = V1)) + geom_boxplot()
+ggplot(data = HouseVotes84, mapping = aes(group = Class, x = Class, y = V2)) + geom_boxplot()
+ggplot(data = HouseVotes84, mapping = aes(group = Class, x = Class, y = V3)) + geom_boxplot()
+ggplot(data = HouseVotes84, mapping = aes(group = Class, x = Class, y = V4)) + geom_boxplot()
+ggplot(data = HouseVotes84, mapping = aes(group = Class, x = Class, y = V5)) + geom_boxplot()
+ggplot(data = HouseVotes84, mapping = aes(group = Class, x = Class, y = V6)) + geom_boxplot()
+ggplot(data = HouseVotes84, mapping = aes(group = Class, x = Class, y = V7)) + geom_boxplot()
+ggplot(data = HouseVotes84, mapping = aes(group = Class, x = Class, y = V8)) + geom_boxplot()
+ggplot(data = HouseVotes84, mapping = aes(group = Class, x = Class, y = V9)) + geom_boxplot()
+ggplot(data = HouseVotes84, mapping = aes(group = Class, x = Class, y = V10)) + geom_boxplot()
+ggplot(data = HouseVotes84, mapping = aes(group = Class, x = Class, y = V11)) + geom_boxplot()
+ggplot(data = HouseVotes84, mapping = aes(group = Class, x = Class, y = V12)) + geom_boxplot()
+ggplot(data = HouseVotes84, mapping = aes(group = Class, x = Class, y = V13)) + geom_boxplot()
+ggplot(data = HouseVotes84, mapping = aes(group = Class, x = Class, y = V14)) + geom_boxplot()
+ggplot(data = HouseVotes84, mapping = aes(group = Class, x = Class, y = V15)) + geom_boxplot()
+ggplot(data = HouseVotes84, mapping = aes(group = Class, x = Class, y = V16)) + geom_boxplot()
+HouseVotes84 <- mutate(HouseVotes84, V1 = as.factor(ifelse(is.na(V1), "novote", V1)))
+HouseVotes84 <- mutate(HouseVotes84, V3 = as.factor(ifelse(is.na(V3), "novote", V3)))
+HouseVotes84 <- mutate(HouseVotes84, V4 = as.factor(ifelse(is.na(V4), "novote", V4)))
+HouseVotes84 <- mutate(HouseVotes84, V5 = as.factor(ifelse(is.na(V5), "novote", V5)))
+HouseVotes84 <- mutate(HouseVotes84, V6 = as.factor(ifelse(is.na(V6), "novote", V6)))
+HouseVotes84 <- mutate(HouseVotes84, V7 = as.factor(ifelse(is.na(V7), "novote", V7)))
+HouseVotes84 <- mutate(HouseVotes84, V8 = as.factor(ifelse(is.na(V8), "novote", V8)))
+HouseVotes84 <- mutate(HouseVotes84, V9 = as.factor(ifelse(is.na(V9), "novote", V9)))
+HouseVotes84 <- mutate(HouseVotes84, V11 = as.factor(ifelse(is.na(V11), "novote", V11)))
+HouseVotes84 <- mutate(HouseVotes84, V12 = as.factor(ifelse(is.na(V12), "novote", V12)))
+                       
+#1, 3, 4, 5, 6, 7, 8, 9, 11, 12
+HouseVotes84 <- select(HouseVotes84, Class, V1, V3, V4, V5, V6, V7, V8, V9, V11, V12)
+head(HouseVotes84)
+set.seed(57676)
+trainIndex <- createDataPartition(HouseVotes84$Class, p = 0.8, list = FALSE, times = 1)
+houseTrain <- HouseVotes84[trainIndex,]
+houseTest <- HouseVotes84[-trainIndex,]
+scaler <- preProcess(houseTrain, method = c("center", "scale", "knnImpute"))
+houseTrain <- predict(scaler, houseTrain)
+houseTest <- predict(scaler, houseTest)
+knnModel <- train(Class ~ V1, data = houseTrain, method ="knn")
+install.packages("e1071")
+houseV1predictions <- predict(knnModel, houseTest)
+confusionMatrix(houseV1predictions, houseTest$Class)
+
+knnModel <- train(Class ~ V3, data = houseTrain, method ="knn")
+houseV3predictions <- predict(knnModel, houseTest)
+confusionMatrix(houseV3predictions, houseTest$Class)
+
+knnModel <- train(Class ~ V4, data = houseTrain, method ="knn")
+houseV4predictions <- predict(knnModel, houseTest)
+confusionMatrix(houseV4predictions, houseTest$Class)
+
+knnModel <- train(Class ~ V5, data = houseTrain, method ="knn")
+houseV5predictions <- predict(knnModel, houseTest)
+confusionMatrix(houseV5predictions, houseTest$Class)
+
+knnModel <- train(Class ~ V6, data = houseTrain, method ="knn")
+houseV6predictions <- predict(knnModel, houseTest)
+confusionMatrix(houseV6predictions, houseTest$Class)
+
+knnModel <- train(Class ~ V7, data = houseTrain, method ="knn")
+houseV7predictions <- predict(knnModel, houseTest)
+confusionMatrix(houseV7predictions, houseTest$Class)
+
+knnModel <- train(Class ~ V8, data = houseTrain, method ="knn")
+houseV8predictions <- predict(knnModel, houseTest)
+confusionMatrix(houseV8predictions, houseTest$Class)
+
+knnModel <- train(Class ~ V9, data = houseTrain, method ="knn")
+houseV9predictions <- predict(knnModel, houseTest)
+confusionMatrix(houseV9predictions, houseTest$Class)
+
+knnModel <- train(Class ~ V11, data = houseTrain, method ="knn")
+houseV11predictions <- predict(knnModel, houseTest)
+confusionMatrix(houseV11predictions, houseTest$Class)
+
+knnModel <- train(Class ~ V12, data = houseTrain, method ="knn")
+houseV12predictions <- predict(knnModel, houseTest)
+confusionMatrix(houseV12predictions, houseTest$Class)
+
+
+knnModel <- train(Class ~ V4 + V9, data = houseTrain, method ="knn")
+houseV49predictions <- predict(knnModel, houseTest)
+confusionMatrix(houseV49predictions, houseTest$Class)
+
+
+knnModel <- train(Class ~ V4 + V3, data = houseTrain, method ="knn")
+houseV43predictions <- predict(knnModel, houseTest)
+confusionMatrix(houseV43predictions, houseTest$Class)
+
+knnModel <- train(Class ~ V4 + V3 + V9, data = houseTrain, method ="knn")
+houseV439predictions <- predict(knnModel, houseTest)
+confusionMatrix(houseV439predictions, houseTest$Class)
